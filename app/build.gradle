@@ -17,6 +17,15 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // apk名字
+    applicationVariants.all {
+        variant ->
+            variant.outputs.all {
+                def createTime = new Date().format("YYYYMMddHHmmss", TimeZone.getTimeZone("GMT+08:00"))
+                outputFileName = "gpt_" + createTime + ".apk"
+            }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
