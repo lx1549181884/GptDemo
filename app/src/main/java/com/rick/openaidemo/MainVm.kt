@@ -4,6 +4,6 @@ import com.rick.jetpackmvvm.base.BaseViewModel
 import com.rick.jetpackmvvm.other.NoNullLiveData
 
 class MainVm : BaseViewModel() {
-    var text = NoNullLiveData("")
     var input = NoNullLiveData("")
+    var msgs = NoNullLiveData<MutableList<MsgBean>>(mutableListOf())
 }
