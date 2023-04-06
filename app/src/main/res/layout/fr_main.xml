@@ -6,15 +6,15 @@
 
         <variable
             name="vm"
-            type="com.rick.openaidemo.MainVm" />
+            type="com.rick.openaidemo.vm.MainVm" />
 
         <variable
             name="fr"
-            type="com.rick.openaidemo.MainFr" />
+            type="com.rick.openaidemo.fr.MainFr" />
 
         <variable
             name="adapter"
-            type="com.rick.openaidemo.MainFr.Adapter" />
+            type="com.rick.openaidemo.fr.MainFr.Adapter" />
     </data>
 
     <LinearLayout
@@ -43,7 +43,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginEnd="@dimen/space"
-                android:background="@drawable/input_bg"
+                android:background="@drawable/bubble_white"
                 android:hint="请输入内容"
                 android:padding="@dimen/space"
                 android:text="@={vm.input}"

@@ -1,4 +1,4 @@
-package com.rick.openaidemo
+package com.rick.openaidemo.bean
 
 import com.aallam.openai.api.BetaOpenAI
 import com.aallam.openai.api.chat.ChatMessage

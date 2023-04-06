@@ -9,7 +9,7 @@
 
         <fragment
             android:id="@+id/MainFr"
-            android:name="com.rick.openaidemo.MainFr"
+            android:name="com.rick.openaidemo.fr.MainFr"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </FrameLayout>

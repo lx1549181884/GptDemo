@@ -1,4 +1,4 @@
-package com.rick.openaidemo
+package com.rick.openaidemo.fr
 
 import android.graphics.Color
 import android.view.Gravity
@@ -14,18 +14,17 @@ import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.rick.jetpackmvvm.base.BaseFragment
 import com.rick.jetpackmvvm.base.BaseListAdapter
+import com.rick.openaidemo.R
+import com.rick.openaidemo.bean.MsgBean
 import com.rick.openaidemo.databinding.FrMainBinding
 import com.rick.openaidemo.databinding.ItemChatBinding
+import com.rick.openaidemo.vm.MainVm
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @BetaOpenAI
 class MainFr : BaseFragment<FrMainBinding, MainVm>() {
-    private val openAI by lazy {
-//        OpenAI("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")
-        OpenAI("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")
-    }
-
     override fun initView(binding: FrMainBinding, vm: MainVm) {
         binding.vm = vm
         binding.fr = this
@@ -58,19 +57,22 @@ class MainFr : BaseFragment<FrMainBinding, MainVm>() {
             MsgBean(time + 1, ChatMessage(role = ChatRole.Assistant, ""))
         vm.msgs.value.add(assistantMsg)
         vm.msgs.value = vm.msgs.value
-
         // 发起请求
-        lifecycleScope.launch {
-            openAI.chatCompletions(req).collectLatest {
-                it.choices[0].delta?.content?.let { c ->
-                    // 更新助手消息
-                    val index = vm.msgs.value.indexOfFirst { it.time == assistantMsg.time }
-                    val msgBean = vm.msgs.value[index]
-                    msgBean.chatMsg =
-                        ChatMessage(role = ChatRole.Assistant, msgBean.chatMsg.content + c)
-                    binding.adapter?.notifyItemChanged(index)
+        lifecycleScope.launch(CoroutineExceptionHandler { _, exception ->
+            println(exception)
+            ToastUtils.showLong(exception.message)
+        }) {
+            OpenAI("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").chatCompletions(req)
+                .collectLatest {
+                    it.choices[0].delta?.content?.let { c ->
+                        // 更新助手消息
+                        val index = vm.msgs.value.indexOfFirst { it.time == assistantMsg.time }
+                        val msgBean = vm.msgs.value[index]
+                        msgBean.chatMsg =
+                            ChatMessage(role = ChatRole.Assistant, msgBean.chatMsg.content + c)
+                        binding.adapter?.notifyItemChanged(index)
+                    }
                 }
-            }
         }
     }
 
