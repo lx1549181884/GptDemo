@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.view.Gravity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.aallam.openai.api.BetaOpenAI
 import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
@@ -14,6 +15,7 @@ import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.rick.jetpackmvvm.base.BaseFragment
 import com.rick.jetpackmvvm.base.BaseListAdapter
+import com.rick.jetpackmvvm.other.refresh
 import com.rick.openaidemo.R
 import com.rick.openaidemo.bean.MsgBean
 import com.rick.openaidemo.databinding.FrMainBinding
@@ -29,6 +31,7 @@ class MainFr : BaseFragment<FrMainBinding, MainVm>() {
         binding.vm = vm
         binding.fr = this
         binding.adapter = Adapter()
+        (binding.rv.layoutManager as LinearLayoutManager).stackFromEnd = true
     }
 
     fun send() {
@@ -46,7 +49,7 @@ class MainFr : BaseFragment<FrMainBinding, MainVm>() {
         val userChatMsg = ChatMessage(ChatRole.User, value)
         val time = System.currentTimeMillis()
         vm.msgs.value.add(MsgBean(time, userChatMsg))
-        vm.msgs.value = vm.msgs.value
+        vm.msgs.refresh()
 
         // 创建请求
         val req =
@@ -56,7 +59,7 @@ class MainFr : BaseFragment<FrMainBinding, MainVm>() {
         val assistantMsg =
             MsgBean(time + 1, ChatMessage(role = ChatRole.Assistant, ""))
         vm.msgs.value.add(assistantMsg)
-        vm.msgs.value = vm.msgs.value
+        vm.msgs.refresh()
         // 发起请求
         lifecycleScope.launch(CoroutineExceptionHandler { _, exception ->
             println(exception)
@@ -70,7 +73,7 @@ class MainFr : BaseFragment<FrMainBinding, MainVm>() {
                         val msgBean = vm.msgs.value[index]
                         msgBean.chatMsg =
                             ChatMessage(role = ChatRole.Assistant, msgBean.chatMsg.content + c)
-                        binding.adapter?.notifyItemChanged(index)
+                        vm.msgs.refresh()
                     }
                 }
         }
@@ -89,7 +92,9 @@ class MainFr : BaseFragment<FrMainBinding, MainVm>() {
             override fun areItemsTheSame(oldItem: MsgBean, newItem: MsgBean) =
                 oldItem.time == newItem.time
 
-            override fun areContentsTheSame(oldItem: MsgBean, newItem: MsgBean) = false
+
+            override fun areContentsTheSame(oldItem: MsgBean, newItem: MsgBean) =
+                oldItem.chatMsg.content == newItem.chatMsg.content
         }) {
         override fun initItem(position: Int, bean: MsgBean, binding: ItemChatBinding) {
             if (bean.chatMsg.role == ChatRole.User) {
