@@ -65,7 +65,7 @@ class MainFr : BaseFragment<FrMainBinding, MainVm>() {
             println(exception)
             ToastUtils.showLong(exception.message)
         }) {
-            OpenAI("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").chatCompletions(req)
+            OpenAI("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").chatCompletions(req)
                 .collectLatest {
                     it.choices[0].delta?.content?.let { c ->
                         // 更新助手消息
